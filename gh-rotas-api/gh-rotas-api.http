@@ -1,0 +1,6 @@
+@gh_rotas_api_HostAddress = http://localhost:5232
+
+GET {{gh_rotas_api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

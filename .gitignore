@@ -1,0 +1,36 @@
+# Build and IDE state
+**/bin/
+**/obj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local settings and secrets
+**/appsettings.Local.json
+**/appsettings.*.local.json
+**/secrets.json
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.pem
+*.key
+*.publishsettings
+**/PublishProfiles/
+
+# Logs, tests and database backups
+**/logs/
+*.log
+TestResults/
+**/TestResults/
+coverage/
+*.bak
+*.mdf
+*.ldf
+*.db
+*.sqlite*

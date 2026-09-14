@@ -1,0 +1,56 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36518.9
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gh-rotas-api", "gh-rotas-api\gh-rotas-api.csproj", "{68361CEC-AF7C-4717-8660-74B307B47F03}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth.Tests", "tests\Auth.Tests\Auth.Tests.csproj", "{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Debug|x64.Build.0 = Debug|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Debug|x86.Build.0 = Debug|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Release|x64.ActiveCfg = Release|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Release|x64.Build.0 = Release|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Release|x86.ActiveCfg = Release|Any CPU
+		{68361CEC-AF7C-4717-8660-74B307B47F03}.Release|x86.Build.0 = Release|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Debug|x64.Build.0 = Debug|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Debug|x86.Build.0 = Debug|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Release|x64.ActiveCfg = Release|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Release|x64.Build.0 = Release|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Release|x86.ActiveCfg = Release|Any CPU
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EA80CE91-F24E-46C1-BAD0-2F5453A5A665} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BA319CD3-A427-4A0D-8DAB-DCAD96452415}
+	EndGlobalSection
+EndGlobal
