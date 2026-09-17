@@ -6,7 +6,7 @@ Execute **um** dos scripts no banco previamente criado:
 - SQL Server: `scripts/sqlserver.sql`
 - MySQL 8+: `scripts/mysql.sql`
 
-A API não cria o banco nem executa scripts automaticamente. Defina `Database:Provider` como `SqlServer` ou `MySql`. A implementação usa consultas parametrizadas e índice único para impedir cadastros concorrentes com o mesmo e-mail. O e-mail é comparado sem diferenciar maiúsculas de minúsculas.
+A API não cria o banco nem executa scripts automaticamente. No Docker Compose, o serviço db-init faz essa inicialização (veja a seção Docker). Defina `Database:Provider` como `SqlServer` ou `MySql`. A implementação usa consultas parametrizadas e índice único para impedir cadastros concorrentes com o mesmo e-mail. O e-mail é comparado sem diferenciar maiúsculas de minúsculas.
 
 Na pasta `gh-rotas-api`, configure os segredos locais:
 ```powershell
@@ -131,3 +131,58 @@ Exemplo de estrutura local (mescle com os demais segredos existentes):
 Segredos do Usuário ficam fora do repositório e não são criptografados pelo .NET: proteja o acesso à sua conta local.
 Em produção, injete ConnectionStrings__DefaultConnection e Jwt__Key usando os segredos da hospedagem. Nunca coloque credenciais em commits, prints, arquivos .http ou logs.
 O .gitignore exclui arquivos locais, artefatos de compilação, certificados, logs e backups.
+
+## Executar API e SQL Server com Docker
+
+Inicie o Docker Desktop com **contêineres Linux**. Na raiz do repositório:
+
+```powershell
+./scripts/setup-docker.ps1
+docker compose up --build -d
+```
+
+O script cria `.env` com senhas e chave JWT aleatórias, sem exibir os valores.
+Se o arquivo já existir, ele é preservado. Para migrar o Compose antigo, adicione
+as variáveis de `.env.example` e preencha os três segredos. A senha
+`APP_DB_PASSWORD` aceita 16 a 128 caracteres (letras, números, `_` e `!`);
+inclua maiúsculas, minúsculas, números e símbolo para a política do SQL Server.
+
+O Compose inicia SQL Server 2022 **Developer** (desenvolvimento/testes), aguarda
+o healthcheck, executa `db-init` e só então inicia a API. A inicialização cria
+`GhRotas`, aplica `scripts/sqlserver.sql` e cria o login `gh_rotas` com
+permissão de SELECT e INSERT em `dbo.Users`. Reexecuções preservam banco e dados.
+É normal o serviço `db-init` aparecer como `Exited (0)`.
+
+- Swagger: http://localhost:8080/swagger.
+- SQL Server no SSMS: servidor `tcp:127.0.0.1,14330`, autenticação SQL Server,
+  usuário `gh_rotas` e senha `APP_DB_PASSWORD` do `.env`.
+- Para administrar o banco, use `sa` e `MSSQL_SA_PASSWORD` do `.env`.
+- No SSMS, habilite confiar no certificado do servidor para este ambiente local.
+- Entre contêineres, a API usa `sqlserver,1433`; não use `localhost`.
+- Se a porta 14330 já estiver ocupada, altere `SQL_PORT` no `.env` e use essa
+  porta no SSMS. `API_PORT` controla a porta HTTP.
+- `CORS_ORIGIN` define a origem permitida do frontend.
+
+```powershell
+docker compose ps -a
+docker compose logs -f api sqlserver
+docker compose down
+docker compose up -d
+```
+
+Os dados ficam no volume `sqlserver-data` e sobrevivem ao `docker compose down`
+e à recriação dos contêineres. **Não use `docker compose down -v` se quiser
+preservar o banco**, pois essa opção remove o volume. Guarde o `.env`:
+alterar as senhas nele não altera as senhas dos logins já criados no volume;
+uma rotação exige também atualizar os logins no SQL Server.
+
+O `.env` é ignorado pelo Git e pelo build Docker. Segredos do Usuário do Visual
+Studio não são carregados pelo contêiner. O Compose define a conexão da API
+automaticamente; `Database__Provider` e `ConnectionStrings__DefaultConnection`
+do antigo `.env` não são utilizados nesta configuração.
+
+O ambiente é local, publica as duas portas somente em localhost e usa HTTP e
+certificado SQL autoassinado. Para produção, ajuste a edição/licença do SQL Server,
+TLS, backup, segredos e CORS; use `Production` e configure HTTPS e encaminhamento
+de cabeçalhos somente de proxies confiáveis conforme SECURITY.md. O Dockerfile
+da API usa build em estágios e runtime .NET 8 como usuário sem privilégios.
