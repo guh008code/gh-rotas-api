@@ -186,3 +186,7 @@ certificado SQL autoassinado. Para produção, ajuste a edição/licença do SQL
 TLS, backup, segredos e CORS; use `Production` e configure HTTPS e encaminhamento
 de cabeçalhos somente de proxies confiáveis conforme SECURITY.md. O Dockerfile
 da API usa build em estágios e runtime .NET 8 como usuário sem privilégios.
+
+## Deploy automático na AWS
+
+Consulte [o guia de deploy](docs/DEPLOY-AWS.md) para configurar GitHub Actions, ECR e SSM, preservando o SQL Server e seu volume.

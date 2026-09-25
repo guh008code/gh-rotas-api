@@ -1,0 +1,61 @@
+name: Deploy API na AWS
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+defaults:
+  run:
+    shell: bash
+concurrency:
+  group: deploy-aws-main
+  cancel-in-progress: false
+jobs:
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AWS_REGION: us-east-1
+      AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+      EC2_INSTANCE_ID: ${{ vars.EC2_INSTANCE_ID }}
+      ECR_REPOSITORY: gh-rotas-api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Testar API
+        run: dotnet test tests/Auth.Tests/Auth.Tests.csproj --configuration Release
+      - name: Validar scripts de deploy
+        run: |
+          bash -n scripts/deploy-ec2.sh
+          python3 scripts/test_deploy_ssm.py
+      - name: Conferir configuração
+        run: |
+          test -n "$AWS_ROLE_ARN" || { echo 'Configure AWS_ROLE_ARN nas variáveis do GitHub.'; exit 1; }
+          test -n "$EC2_INSTANCE_ID" || { echo 'Configure EC2_INSTANCE_ID nas variáveis do GitHub.'; exit 1; }
+      - uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Conferir EC2 ligada
+        run: |
+          state=$(aws ec2 describe-instances --instance-ids "$EC2_INSTANCE_ID" --query 'Reservations[0].Instances[0].State.Name' --output text)
+          test "$state" = running || { echo 'EC2 parada. Ligue-a e execute novamente este workflow em main.'; exit 1; }
+      - name: Construir e publicar imagem
+        run: |
+          account=$(aws sts get-caller-identity --query Account --output text)
+          registry="$account.dkr.ecr.$AWS_REGION.amazonaws.com"
+          image="$registry/$ECR_REPOSITORY:$GITHUB_SHA-$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          aws ecr get-login-password | docker login --username AWS --password-stdin "$registry"
+          docker build --platform linux/amd64 -t "$image" .
+          docker push "$image"
+          digest=$(aws ecr describe-images --repository-name "$ECR_REPOSITORY" --image-ids imageTag="${image##*:}" --query 'imageDetails[0].imageDigest' --output text)
+          echo "DEPLOY_IMAGE=$registry/$ECR_REPOSITORY@$digest" >> "$GITHUB_ENV"
+      - name: Atualizar somente API via Systems Manager
+        run: python3 scripts/deploy-ssm.py

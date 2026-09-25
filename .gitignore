@@ -34,3 +34,7 @@ coverage/
 *.ldf
 *.db
 *.sqlite*
+
+# Python deployment helpers
+__pycache__/
+*.pyc
