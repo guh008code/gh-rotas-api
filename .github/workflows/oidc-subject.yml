@@ -1,0 +1,17 @@
+name: Identificar OIDC para configurar AWS
+on: workflow_dispatch
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  subject:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const token = await core.getIDToken('sts.amazonaws.com');
+            const claims = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
+            core.info('Use este valor exato na condição sub da trust policy:');
+            core.info(claims.sub);
